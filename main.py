@@ -24,16 +24,23 @@ class CALC:
     def set_day(self, day):
         self.day = day
 
-    def annual_apr(self):
-        self.calc = self.fund * (1 + self.apr / 100)
+    def annual_apr(self, apr: float = None):
+        apr = apr if apr is not None else self.apr
+        self.calc = self.fund * (1 + apr / 100)
         return self.calc
 
-    def annual_apy(self, day_compound):
-        self.calc = self.fund * pow(1 + (self.apr / 100) / day_compound, day_compound)
-        return self.calc
+    def annual_apy(self, apy: float = None):
+        apy = apy if apy is not None else self.apy
+        apy = apy if apy != 0 else self.calc_apy(365)
+        print(apy)
+        if apy == 0:
+            return "Need to set APY or APR to process"
 
-    def calc_apy(self, day_compound):
-        self.apy = pow(1 + ((self.apr / 100) / day_compound), self.day / 365 * day_compound) * 100
+        self.calc = self.fund * pow(1 + (apy / 100) / 365, 365)
+        return self.calc if self.calc != self.fund else ""
+
+    def calc_apy(self, compounding_frequency):
+        self.apy = (pow(1 + (self.apr / 100) / compounding_frequency, compounding_frequency) - 1) * 100
         return self.apy
 
     def apr_decrease(self, apr_per_time, per_time: str, apr=None, day=None):
@@ -60,10 +67,9 @@ class CALC:
 
 def main():
     calc = CALC(100)
-    calc.set_apy(200)
     calc.set_apr(100)
 
-    print(calc.annual_apy(365))
+    print(calc.annual_apy())
 
 
 if __name__ == '__main__':
